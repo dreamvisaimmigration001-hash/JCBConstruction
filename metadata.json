@@ -1,0 +1,6 @@
+{
+  "name": "JCB Construction Canada",
+  "description": "JCB Construction Canada specializes in the management and execution of major construction projects across industrial, commercial, multi-residential and institutional sectors.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
