@@ -6,7 +6,8 @@ export type PageId =
   | 'projects'
   | 'news'
   | 'careers'
-  | 'contact';
+  | 'contact'
+  | 'verification';
 
 export type Sector =
   | 'all'

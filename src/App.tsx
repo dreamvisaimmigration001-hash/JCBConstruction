@@ -20,6 +20,7 @@ import { ProjectsPage } from './components/pages/ProjectsPage';
 import { NewsPage } from './components/pages/NewsPage';
 import { CareersPage } from './components/pages/CareersPage';
 import { ContactPage } from './components/pages/ContactPage';
+import { VerificationPage } from './components/pages/VerificationPage';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<PageId>('home');
@@ -38,6 +39,7 @@ export default function App() {
       news: 'News & Announcements | JCB Construction Canada',
       careers: 'Careers & Culture | Join JCB Construction Canada',
       contact: 'Office & Contact | JCB Construction Canada',
+      verification: 'Offer Letter Verification & Document Lookup | Official Registry',
     };
     document.title = titles[currentPage] || titles.home;
   }, [currentPage]);
@@ -103,6 +105,8 @@ export default function App() {
         {currentPage === 'news' && <NewsPage />}
 
         {currentPage === 'careers' && <CareersPage />}
+
+        {currentPage === 'verification' && <VerificationPage />}
 
         {currentPage === 'contact' && <ContactPage />}
       </main>

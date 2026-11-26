@@ -17,6 +17,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenStartProject }
     { id: 'projects', label: 'Portfolio & Projects' },
     { id: 'news', label: 'News & Announcements' },
     { id: 'careers', label: 'Careers & Culture' },
+    { id: 'verification', label: 'Offer Letter Verification' },
     { id: 'contact', label: 'Contact & Office' },
   ];
 
