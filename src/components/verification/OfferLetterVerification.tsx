@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Search,
   CheckCircle2,
@@ -7,6 +7,7 @@ import {
   RefreshCw,
   FileWarning,
   Lock,
+  ExternalLink,
 } from 'lucide-react';
 
 export interface OfferCompany {
@@ -69,6 +70,22 @@ export const OfferLetterVerification: React.FC<OfferLetterVerificationProps> = (
   const [error, setError] = useState<string | null>(null);
   const [offer, setOffer] = useState<OfferData | null>(null);
   const [hasSearched, setHasSearched] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+
+  // Detect mobile device to apply Google Docs Viewer for mobile PDF rendering
+  useEffect(() => {
+    const checkMobile = () => {
+      const userAgent = typeof navigator !== 'undefined' ? navigator.userAgent : '';
+      const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+      setIsMobile(
+        mobileRegex.test(userAgent) ||
+          (typeof window !== 'undefined' && window.innerWidth < 768)
+      );
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Determine file type helper
   const isPdf = (file?: OfferFile): boolean => {
@@ -95,6 +112,14 @@ export const OfferLetterVerification: React.FC<OfferLetterVerificationProps> = (
       imageExtensions.some((ext) => url.endsWith(ext) || name.endsWith(ext)) ||
       url.includes('/image/')
     );
+  };
+
+  // Get cross-platform PDF preview URL (Google Docs Viewer ensures Android mobile compatibility)
+  const getPdfPreviewUrl = (fileUrl: string): string => {
+    if (isMobile) {
+      return `https://docs.google.com/gview?url=${encodeURIComponent(fileUrl)}&embedded=true`;
+    }
+    return fileUrl;
   };
 
   // Handle Search API Call
@@ -300,13 +325,29 @@ export const OfferLetterVerification: React.FC<OfferLetterVerificationProps> = (
           {/* Embedded PDF / Document Viewer Preview */}
           {offer.file?.url && (
             <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/60 border border-slate-200/80 overflow-hidden">
-              <div className="p-3 sm:p-5 bg-slate-100/60">
+              <div className="px-4 py-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                <span className="text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                  Document Preview
+                </span>
+                <a
+                  href={offer.file.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition-colors"
+                >
+                  <span>Open Fullscreen</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
+
+              <div className="p-2 sm:p-5 bg-slate-100/60">
                 {isPdf(offer.file) ? (
                   <div className="w-full rounded-xl overflow-hidden shadow-sm border border-slate-200 bg-white">
                     <iframe
-                      src={offer.file.url}
+                      src={getPdfPreviewUrl(offer.file.url)}
                       title="Official Offer Letter Preview"
-                      className="w-full h-[650px] sm:h-[750px] rounded-xl border-0"
+                      className="w-full h-[550px] sm:h-[750px] rounded-xl border-0"
+                      allow="autoplay"
                     />
                   </div>
                 ) : isImage(offer.file) ? (
@@ -320,9 +361,10 @@ export const OfferLetterVerification: React.FC<OfferLetterVerificationProps> = (
                 ) : (
                   <div className="w-full rounded-xl overflow-hidden shadow-sm border border-slate-200 bg-white">
                     <iframe
-                      src={offer.file.url}
+                      src={getPdfPreviewUrl(offer.file.url)}
                       title="Official Offer Letter Preview"
-                      className="w-full h-[650px] sm:h-[750px] rounded-xl border-0"
+                      className="w-full h-[550px] sm:h-[750px] rounded-xl border-0"
+                      allow="autoplay"
                     />
                   </div>
                 )}
